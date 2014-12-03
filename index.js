@@ -39,17 +39,8 @@ module.exports = function(patterns, opts, cb) {
   opts = extend({}, {mode: 'object'}, opts);
 
   glob(patterns, opts, function(err, files) {
-    async.map(files, function(fp, next) {
-      fs.readFile(fp, 'utf8', function(err, content) {
-        if (err) return cb(err);
-        var res = {
-          content: content,
-          path: fp
-        };
-        if (opts.mode === 'string') res = content;
-        next(null, res);
-      });
-    }, cb);
+    if (err) return cb(err);
+    cb(null, files);
   });
 };
 
@@ -67,14 +58,5 @@ module.exports = function(patterns, opts, cb) {
  */
 
 module.exports.sync = function(patterns, opts) {
-  opts = extend({}, {mode: 'object'}, opts);
-  var files = glob.sync(patterns, opts);
-
-  return files.map(function(fp) {
-    var res = fs.readFileSync(fp, 'utf8');
-
-    return opts.mode === 'object'
-      ? {content: res, path: fp}
-      : res;
-  });
+  return glob.sync(patterns, opts);
 };
