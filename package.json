@@ -1,0 +1,40 @@
+{
+  "name": "helper-glob",
+  "description": "Template helper for globbing.",
+  "version": "0.1.0",
+  "homepage": "https://github.com/helpers/helper-glob",
+  "author": {
+    "name": "Jon Schlinkert",
+    "url": "/**"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/helpers/helper-glob.git"
+  },
+  "bugs": {
+    "url": "https://github.com/helpers/helper-glob/issues"
+  },
+  "license": {
+    "type": "MIT",
+    "url": "https://github.com/helpers/helper-glob/blob/master/LICENSE-MIT"
+  },
+  "main": "index.js",
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "scripts": {
+    "test": "mocha -R spec"
+  },
+  "devDependencies": {
+    "handlebars": "^2.0.0",
+    "lodash": "^2.4.1",
+    "mocha": "*",
+    "should": "*"
+  },
+  "keywords": [],
+  "dependencies": {
+    "async": "^0.9.0",
+    "extend-shallow": "^0.1.1",
+    "globby": "^1.0.0"
+  }
+}
