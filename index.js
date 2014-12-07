@@ -11,52 +11,72 @@
  * Module dependencies
  */
 
-var fs = require('fs');
 var path = require('path');
-var glob = require('globby');
-var async = require('async');
+var globby = require('globby');
 var extend = require('extend-shallow');
 
 
 /**
- * Return the content from a glob of files
- * using glob patterns.
- *
- * ```handlebars
- * {{glob 'files/*.md'}}
- * ```
- * @param {String} `patterns`
- * @param {Options} `opts`
- * @return {Object}
+ * Expose `glob` helpers
  */
 
-module.exports = function(patterns, opts, cb) {
-  if (typeof opts === 'function') {
-    cb = opts;
-    opts = {};
-  }
-
-  opts = extend({}, {mode: 'object'}, opts);
-
-  glob(patterns, opts, function(err, files) {
-    if (err) return cb(err);
-    cb(null, files);
-  });
-};
-
+module.exports = glob;
 
 /**
  * Return the content from a glob of files
  * using glob patterns.
  *
- * ```handlebars
- * {{glob 'files/*.md'}}
- * ```
+ * @param {String} `patterns`
+ * @param {Options} `opts`
+ * @return {Object}
+ * @api public
+ */
+
+function glob(patterns, opts, cb) {
+  if (typeof opts === 'function') {
+    cb = opts; opts = {};
+  }
+  opts = extend({}, typeof patterns === 'object' ? patterns : {}, opts);
+  if (this && this.app) {
+    opts = extend({}, this.context, this.app.options, opts);
+  }
+  if (opts && opts.hash) {
+    extend(opts, opts.hash);
+  }
+  globby(patterns, opts, function(err, files) {
+    if (err) return cb(err);
+    cb(null, files.map(cwd(opts)));
+  });
+}
+
+/**
+ * Return the content from a glob of files
+ * using glob patterns.
+ *
  * @param {String} `patterns`
  * @param {Options} `opts`
  * @return {String}
  */
 
-module.exports.sync = function(patterns, opts) {
-  return glob.sync(patterns, opts);
+glob.sync = function(patterns, opts) {
+  opts = extend({}, typeof patterns === 'object' ? patterns : {}, opts);
+  if (this && this.app) {
+    opts = extend({}, this.context, this.app.options, opts);
+  }
+  if (opts && opts.hash) {
+    extend(opts, opts.hash);
+  }
+  return globby.sync(patterns, opts).map(cwd(opts));
 };
+
+/**
+ * Make file paths relative to process.cwd()
+ */
+
+function cwd(opts) {
+  return function (fp) {
+    if (!opts.cwd) return fp;
+    return path.join(opts.cwd, fp)
+      .replace(/\\/g, '/');
+  };
+}
