@@ -42,6 +42,8 @@ handlebars.registerHelper('read', function(fp) {
 });
 ```
 
+Usage:
+
 ```handlebars
 {{glob 'files/*.txt'}}
 
